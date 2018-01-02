@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/thread_receive"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layoutDirection="rtl"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/chat_time"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/content"
+        app:layout_constraintRight_toLeftOf="@+id/content"
+        tools:ignore="MissingConstraints,RtlHardcoded,SmallSp"
+        tools:layout_constraintBottom_creator="1"
+        tools:targetApi="lollipop"
+        app:layout_constraintTop_toTopOf="@+id/content"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/rounded_corner"
+        android:maxWidth="190dp"
+        android:padding="5dp"
+        android:text="@string/android_charting_application_xml_ui_design"
+        android:textAlignment="textStart"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+        android:textColor="@color/chat_text"
+        android:textSize="14dp"
+        app:layout_constraintRight_toLeftOf="@+id/arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints,RtlHardcoded"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1"
+        tools:targetApi="lollipop" />
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="true"
+        android:contentDescription=""
+        android:scaleType="fitXY"
+        android:src="@drawable/chat_msg_y_arrow_3x"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/content"
+        tools:ignore="ContentDescription,RtlHardcoded"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+
+</android.support.constraint.ConstraintLayout>

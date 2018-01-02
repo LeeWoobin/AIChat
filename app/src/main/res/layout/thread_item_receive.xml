@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/thread_send"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="81dp">
+
+
+    <ImageView
+        android:id="@+id/imageview_avatar"
+        android:layout_width="43dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="-1dp"
+        android:layout_weight="3"
+        android:src="@drawable/chat_addie_3x"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription,RtlHardcoded" />
+
+    <ImageView
+        android:id="@+id/imageView_arrow"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:scaleType="fitEnd"
+        android:src="@drawable/chat_msg_w_arrow_3x"
+        app:layout_constraintLeft_toRightOf="@+id/imageview_avatar"
+        app:layout_constraintTop_toTopOf="@+id/content_layout"
+        tools:ignore="ContentDescription,MissingConstraints,RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/textView_addie_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textView_addie_name"
+        android:textColor="@color/chat_text"
+        android:textSize="12dp"
+        app:layout_constraintLeft_toLeftOf="@+id/content_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText,RtlHardcoded" />
+
+
+    <TextView
+        android:id="@+id/id"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="6"
+        android:text="@string/chat_time"
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/content_layout"
+        app:layout_constraintLeft_toRightOf="@+id/content_layout"
+        tools:ignore="MissingConstraints,RtlHardcoded,SmallSp" />
+
+    <LinearLayout
+        android:id="@+id/content_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="-6dp"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_corner_chat_receive"
+        app:layout_constraintLeft_toRightOf="@+id/imageView_arrow"
+        app:layout_constraintTop_toBottomOf="@+id/textView_addie_name">
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:maxWidth="240dp"
+            android:minLines="1"
+            android:padding="5dp"
+            android:text="Android charting application xml ui design. "
+            android:textAlignment="textStart"
+            android:textColor="@color/chat_text"
+            android:typeface="monospace"
+            android:textSize="14dp"
+            tools:ignore="HardcodedText,MissingConstraints,RtlHardcoded" />
+
+        <FrameLayout
+            android:id="@+id/content_detail_layout"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/content"
+            tools:layout_editor_absoluteX="48dp">
+
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/galaxy"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

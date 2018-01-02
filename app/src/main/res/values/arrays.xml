@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="connect">
+        <item >아임클라우드 서버</item>
+        <item >아마존 서버</item>
+    </string-array>
+
+
+</resources>

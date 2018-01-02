@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#ffffff</color>
+    <color name="intro_bg">#0278b5</color>
+
+    <color name="colorPrimary">#0278b5</color>
+    <color name="colorPrimaryLight">#de0278b5</color>
+    <color name="colorPrimaryLight2">#8a0278b5</color>
+    <color name="colorPrimaryLight3">#610278b5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#ffd40236</color>
+
+    <color name="indicator">#3593b5</color>
+
+    <color name="primaryDarkText">#de000000</color>
+    <color name="secondaryDarkText">#8a000000</color>
+    <color name="disabledDarkText">#61000000</color>
+    <color name="hintDarkText">#61000000</color>
+
+    <color name="primaryText">#deffffff</color>
+    <color name="primaryTextDisabled">#61ffffff</color>
+    <color name="secondaryText">#8AFFFFFF</color>
+
+    <color name="dlg_background">#1f000000</color>
+    <color name="dlg_title_background">#38a3cb</color>
+    <color name="dlg_title_text">#ffffff</color>
+    <color name="dlg_message_background">#ffffff</color>
+    <color name="dlg_message_text">#2a2a2a</color>
+    <color name="dlg_divider">#d0d0d0</color>
+    <color name="dlg_ok_background">#ffffff</color>
+    <color name="dlg_ok_text">#31a2cd</color>
+
+    <color name="view_order_divider">#dddada</color>
+    <color name="darkGray">#111111</color>
+    <color name="saveWaitProgressColor">@color/darkGray</color>
+    <color name="chat_send_bg">#fffff03d</color>
+    <color name="chat_receive_bg">@color/white</color>
+    <color name="order_result_bg">#daeef7</color>
+    <color name="chat_text">#000000</color>
+
+    <color name="rating0">#1080fe</color>
+    <color name="rating1">#48cbff</color>
+    <color name="rating2">#34ae09</color>
+    <color name="rating3">#ff5b02</color>
+    <color name="rating4">#ffb402</color>
+    <color name="rating_no">#dedede</color>
+
+
+</resources>
