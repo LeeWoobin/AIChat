@@ -2,6 +2,7 @@ package kr.co.imcloud.app.aichat.ui.chat.threads;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,8 +37,8 @@ import kr.co.imcloud.app.aichat.R;
 import kr.co.imcloud.app.aichat.models.ThreadItem;
 import kr.co.imcloud.app.aichat.stores.ChatStore;
 import kr.co.imcloud.app.aichat.ui.chat.ChatActivity;
+import kr.co.imcloud.app.aichat.ui.chat.ImageActivity;
 import kr.co.imcloud.app.aichat.ui.chat.threads.ThreadsFragment.OnListFragmentInteractionListener;
-import kr.co.imcloud.app.aichat.ui.common.dialog.TableDialog;
 //import kr.co.dominos.app.aichat.ui.chat.threads.dummy.DummyContent.DummyItem;
 
 import java.io.FileNotFoundException;
@@ -47,6 +48,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import static android.os.Looper.prepare;
+
 public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<ThreadItem> mValues;
@@ -55,7 +58,7 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
     public ImageLoader imageLoader;
     public DisplayImageOptions options;
 
-    public ThreadItemRecyclerViewAdapter(List<ThreadItem> items, OnListFragmentInteractionListener listener , ChatActivity chatActivity) {
+    public ThreadItemRecyclerViewAdapter(List<ThreadItem> items, OnListFragmentInteractionListener listener, ChatActivity chatActivity) {
         mValues = items;
         mListener = listener;
         this.chatActivity = chatActivity;
@@ -105,7 +108,6 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
                 })
                 .build();
 
-
         return new ViewHolder(view);
     }
 
@@ -113,11 +115,11 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getTime());
-        if (mValues.get(position).content != null) {
-            holder.mContentView.setText(Html.fromHtml(mValues.get(position).content));
+        if (mValues.get(position).message != null) {
+            holder.mContentView.setText(mValues.get(position).message);
         }
 
-//        itemType(holder, position);
+        itemType(holder, position);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,8 +146,6 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
         public final TextView mContentView;
         public ThreadItem mItem;
         public FrameLayout mContentLayout;
-//        public LinearLayout tableLayout;
-//        public TableLayout table1 ,table2;
         public ImageView imageView;
 
 
@@ -154,11 +154,8 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
-            mContentLayout = (FrameLayout)view.findViewById(R.id.content_detail_layout);
-//            tableLayout = (LinearLayout) view.findViewById(R.id.table_layout);
-//            table1 = (TableLayout)view.findViewById(R.id.table1);
-//            table2 = (TableLayout)view.findViewById(R.id.table2);
-            imageView = (ImageView)view.findViewById(R.id.image);
+            mContentLayout = (FrameLayout) view.findViewById(R.id.content_detail_layout);
+            imageView = (ImageView) view.findViewById(R.id.image);
         }
 
         @Override
@@ -167,29 +164,44 @@ public class ThreadItemRecyclerViewAdapter extends RecyclerView.Adapter<ThreadIt
         }
     }
 
-        public void itemType(ViewHolder holder , int position){
-        if(mValues.get(position).type != null && !mValues.get(position).type.equals("")){
+    public void itemType(ViewHolder holder, int position) {
+        if (mValues.get(position).type != null && mValues.get(position).type.equals("VOICE")) {
 
-            if(mValues.get(position).content != null && !mValues.get(position).content.equals("")){
-                if(mValues.get(position).content.contains("image")){
-                    holder.mContentLayout.setVisibility(View.VISIBLE);
-                    holder.imageView.setVisibility(View.VISIBLE);
-//                    holder.tableLayout.setVisibility(View.GONE);
-                }
-                else{
-                    if(holder.mContentLayout != null && holder.imageView !=null) {
-                        holder.mContentLayout.setVisibility(View.GONE);
-//                        holder.tableLayout.setVisibility(View.GONE);
+            if(mValues.get(position).msgData != null){
+                try {
+                    if(chatActivity.mediaPlayer !=null) {
+                        if(chatActivity.mediaPlayer.isPlaying()) {
+                            chatActivity.mediaPlayer.stop();
+                        }
+                        chatActivity.mediaPlayer.reset();
+                        chatActivity.mediaPlayer.setDataSource(mValues.get(position).msgData);
+                        chatActivity.mediaPlayer.prepare();
+                        Thread.sleep(500);
+                        chatActivity.mediaPlayer.start();
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        }
-    }
 
-    public static float convertDpToPixel(float dp, Context context){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
+            if (mValues.get(position).imagePath != null) {
+                holder.mContentLayout.setVisibility(View.VISIBLE);
+                holder.imageView.setVisibility(View.VISIBLE);
+
+                imageLoader.displayImage(mValues.get(position).imagePath, holder.imageView, options);
+
+                Intent intent = new Intent(chatActivity, ImageActivity.class);
+                intent.putExtra("imagePath",mValues.get(position).imagePath);
+                chatActivity.startActivity(intent);
+
+            } else {
+                if (holder.mContentLayout != null && holder.imageView != null) {
+                    holder.mContentLayout.setVisibility(View.GONE);
+                }
+            }
+
+        }
     }
 }

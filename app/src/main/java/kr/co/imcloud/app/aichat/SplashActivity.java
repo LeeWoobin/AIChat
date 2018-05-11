@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
@@ -44,15 +45,6 @@ public class SplashActivity extends AppCompatActivity implements NetworkChangeRe
         checkNetStatus();
     }
 
-
-
-    private void setGif(){
-        ImageView imageView = (ImageView)findViewById(R.id.imageView_intro);
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(imageView);
-        Glide.with(this).load(R.drawable.samsung_splash).into(imageViewTarget);
-    }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -65,7 +57,6 @@ public class SplashActivity extends AppCompatActivity implements NetworkChangeRe
     private AuthStore getStore() {
         return AuthStore.inst();
     }
-
 
     private Handler messageHandler = new Handler() {
         @Override
@@ -92,7 +83,9 @@ public class SplashActivity extends AppCompatActivity implements NetworkChangeRe
         } else {
             Log.i(TAG, "HealthyChecker");
 //            setGif();
-            checkPerm();
+//            checkPerm();
+            this.getStore().reqAuth();
+//            startInternal();
         }
     }
 

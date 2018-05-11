@@ -137,7 +137,7 @@ public class ChatStore extends MsgBase {
 //                break;
 //            }
             case MSG_CHAT_EMPTY_SEND: {
-                this.handleSendEmptyChat(msg);
+//                this.handleSendEmptyChat(msg);
                 break;
             }
 
@@ -182,6 +182,7 @@ public class ChatStore extends MsgBase {
         this.sendMessageDelayed(msg, 500);
     }
 
+    /*
     private void handleSendEmptyChat(Message msg) {
         final Message msgs = Message.obtain(msg);
         IChat iChat = RetrofitUtil.getRetrofit().create(IChat.class);
@@ -251,6 +252,7 @@ public class ChatStore extends MsgBase {
             }
         });
     }
+    */
 
     private void handleCloseAddie(Message msg) {
         final Message msgs = Message.obtain(msg);
@@ -304,41 +306,24 @@ public class ChatStore extends MsgBase {
         return false;
     }
 
-    private BaseModel createSendModel(String message, String msgType) {
+    private BaseModel createSendModel(String message) {
         BaseModel model = new BaseModel();
         model.setValue("key", AuthStore.inst().getAuthKey());
-        model.setString("msg_type",msgType);
+        model.setString("room_id", AuthStore.inst().getRoomKey());
+        model.setString("cb_id", AppConfig.DEFAULT_CHATBOT_ID);
+        model.setString("site_id", AppConfig.DEFAULT_SITE_ID);
         model.setString("message", message);
-        model.setString("msg_sub","");
 
-//        if(msgType.equals("2")) {
-//            model.setString("message", "윤선생");
-//            model.setString("msg_sub", "{\"기능\":\"\",\"번호\":\"111\",\"이름\":\"방그네\",\"말하길\":\"" + message + "\"}");
-//        }else{
-//            model.setString("message", message);
-//            model.setString("msg_sub","");
-//        }
         return model;
     }
 
     private void handleChatSend(Message msg) {
         final Message msgs = Message.obtain(msg);
         String message = msg.getData().getString("message");
-        int id = this.getThreadCount();
-
 
         IChat iChat = RetrofitUtil.getRetrofit().create(IChat.class);
 
-        String msgType;
-
-//        if(AppConfig.DEFAULT_APIERVER_URL.equals("http://211.58.205.50:12000")) {
-//            msgType = "2";
-//        }else{
-            msgType = "2";
-//        }
-
-
-        Call<BaseModel> call= iChat.sendMessage(createSendModel(message, msgType));
+        Call<BaseModel> call = iChat.sendMessage(createSendModel(message));
         call.enqueue(new Callback<BaseModel>() {
             @Override
             public void onResponse(Call<BaseModel> call, Response<BaseModel> response) {
@@ -347,53 +332,55 @@ public class ChatStore extends MsgBase {
                 if (response.isSuccessful()) {
                     JSONObject ResponseObject = new JSONObject(response.body());
                     try {
-                        JSONArray msg_list = ResponseObject.getJSONArray("msg_list");
+//                        JSONArray msg_list = ResponseObject.getJSONArray("msg");
 
-                        if (msg_list != null) {
+//                        if (msg_list != null) {
 
-                            for (int i = 0; i < msg_list.length(); i++) {
+//                            for (int i = 0; i < msg_list.length(); i++) {
 
-                                JSONObject jsonObject = msg_list.getJSONObject(i);
-                                ThreadItem item = null;
-                                String msg = null;
-                                String msgType = null;
-                                String contentType = null;
+                        JSONObject jsonObject = ResponseObject.getJSONObject("msg");
+                        ThreadItem item = null;
+                        String msg = null;
+                        String msgType = null;
+                        String msgData = null;
 
 
-                                if (jsonObject.has("msg")) {
-                                    msg = jsonObject.getString("msg");
-                                }
-                                if (jsonObject.has("msg_type")) {
-                                    msgType = jsonObject.getString("msg_type");
-                                }
+                        if (jsonObject.has("msg")) {
+                            msg = jsonObject.getString("msg");
+                        }
+                        if (jsonObject.has("msg_type")) {
+                            msgType = jsonObject.getString("msg_type");
+                        }
 
-                                if (jsonObject.has("content_type")) {
-                                    contentType = jsonObject.getString("content_type");
-                                }
+                        if (jsonObject.has("msg_data")) {
+                            msgData = jsonObject.getString("msg_data");
+                        }
 
-                                if (jsonObject.has("content")) {
-                                    if (jsonObject.isNull("content")) {
-                                        item = new ThreadItem(false, "bot", msgType, msg);
-                                    } else {
-                                        JSONObject dataObj = jsonObject.getJSONObject("content");
+                        if (jsonObject.has("msg_option")) {
+                            if (jsonObject.isNull("msg_option") || jsonObject.getString("msg_option").equals("")) {
+                                item = new ThreadItem(false, "bot", msgType, msg,msgData);
+                            } else {
+                                String dataString = jsonObject.getString("msg_option");
+                                JSONObject dataObj = new JSONObject(dataString);
 
-                                        if (dataObj != null) {
-
-                                            item = new ThreadItem(false, "bot", msgType, msg, contentType, dataObj);
-                                        }
-                                    }
-                                } else {
-                                    item = new ThreadItem(false, "bot", msgType, msg);
-                                }
-
-                                if (item != null) {
-                                    chatModel.addItem(item);
-                                    notifyMessage(msgr);
+                                if (dataObj != null) {
+                                    item = new ThreadItem(false, "bot", msgType, msg, msgData, dataObj);
+                                }else{
+                                    item = new ThreadItem(false, "bot", msgType, msg,msgData);
                                 }
                             }
+                        } else {
+                            item = new ThreadItem(false, "bot", msgType, msg,msgData);
                         }
-                    } catch (Exception e) {
 
+                        if (item != null) {
+                            chatModel.addItem(item);
+                            notifyMessage(msgr);
+                        }
+//                            }
+//                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     return;
                 } else {
@@ -416,28 +403,10 @@ public class ChatStore extends MsgBase {
                 notifyError(msgs);
             }
         });
-        ThreadItem item = new ThreadItem(true, "bot", msgType,message);
-                chatModel.addItem(item);
-                this.notifyMessage(msgs);
+        ThreadItem item = new ThreadItem(true, "bot", null, message,null);
+        chatModel.addItem(item);
+        this.notifyMessage(msgs);
 
-//        if(msgType != null) {
-//            if (!msgType.equals("2")) {
-//
-//            }
-//        }
-    }
-
-    public String trimCr(String str) {
-        int len = str.length();
-        int st = 0;
-
-        while ((st < len) && (str.charAt(st) <= '\n')) {
-            st++;
-        }
-        while ((st < len) && (str.charAt(len - 1) <= '\n')) {
-            len--;
-        }
-        return ((st > 0) || (len < str.length())) ? str.substring(st, len) : str;
     }
 
 
@@ -461,113 +430,9 @@ public class ChatStore extends MsgBase {
         return this.chatModel.getItems().size();
     }
 
-    public void reqLoadBannerImage() {
-        Message msg = this.makeMessage(MSG_BannerImage);
-        this.sendMessage(msg);
-    }
-
-    private void handleLoadBannerImage(Message msg) {
-        String imgUrl = this.banner.get_img_url();
-        if (imgUrl == null) {
-            return;
-        }
-
-        URL url = null;
-        try {
-//            url = new URL(AppConfig.DEFAUT_APIERVER_URL + imgUrl);
-            url = new URL(imgUrl);
-            Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            this.banner.setBitmap(bmp);
-            this.notifyMessage(msg);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void reqGetCompletedOrderInfo() {
-        Message msg = this.makeMessage(MSG_OrderResult);
-        this.sendMessage(msg);
-    }
-
-    private void handleGetCompletedOrderInfo(Message msg) {
-        IChat iChat = RetrofitUtil.getRetrofit().create(IChat.class);
-        final Message msgs = Message.obtain(msg);
-        this.orderResultModel = null;
-
-        Call<OrderResultModel> call = iChat.getCompletedOrderInfo(AuthStore.inst().getAuthKey());
-        call.enqueue(new Callback<OrderResultModel>() {
-            @Override
-            public void onResponse(Call<OrderResultModel> call, Response<OrderResultModel> response) {
-                if (response.isSuccessful()) {
-                    orderResultModel = response.body();
-                    orderResultModel.buildItems();
-//                    notifyMessage(msgs);
-                    reqLoadItemsImage();
-                    return;
-                } else {
-                    try {
-                        ApiError error = ErrorUtils.parseError(response);
-                        error.buildMessage(msgs.getData());
-                        Log.d(TAG, "handleGetCompletedOrderInfo(), error=" + error);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    notifyError(msgs);
-                    return;
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<OrderResultModel> call, Throwable t) {
-                Log.e(TAG, "handleGetCompletedOrderInfo(), t=" + t.getMessage());
-                notifyError(msgs);
-            }
-        });
-    }
 
     public int getChatTime() {
         return chatTime;
-    }
-
-    public OrderResultModel getOrderResultModel() {
-        return orderResultModel;
-    }
-
-    public void reqLoadImage(OrderItemModel mItem) {
-        Message msg = this.makeMessage(MSG_LoadImage);
-        msg.getData().putString("itemId", mItem.getId());
-        this.sendMessage(msg);
-    }
-
-    private void handleLoadImage(Message msg) {
-        boolean result = this.orderResultModel.handleLoadImage(msg);
-        this.notifyMessage(Message.obtain(msg));
-    }
-
-    public void reqLoadItemsImage() {
-        this.sendMessage(MSG_LoadItemsImage);
-    }
-
-    private void handleLoadItemsImage(Message msg) {
-        this.orderResultModel.handleLoadItemsImage(msg);
-        this.notifyMessage(MSG_OrderResult);
-    }
-
-
-    public void setTestOrderItems(List<OrderItemModel> items) {
-        if (orderResultModel == null) {
-            orderResultModel = new OrderResultModel();
-        }
-        orderResultModel.setTestOrderItems(items);
-    }
-
-    public void reqSendGrade(int value) {
-        Message msg = this.makeMessage(MSG_SendGrade);
-        msg.getData().putInt("grade", value);
-        this.sendMessage(msg);
     }
 
     private void handleSendGrade(Message msg) {
@@ -603,9 +468,6 @@ public class ChatStore extends MsgBase {
         @FormUrlEncoded
         @POST("/api/SendMessage")
         Call<BaseModel> sendMessage(@FieldMap(encoded = true) Map<String, Object> fields);
-
-        @GET("/api/GetCompletedOrderInfo")
-        Call<OrderResultModel> getCompletedOrderInfo(@Query("key") String key);
 
         @FormUrlEncoded
         @PUT("/api/SendGrade")

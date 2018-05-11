@@ -5,11 +5,13 @@
     android:background="#000011"
     android:gravity="center">
 
+    <!--
     <ImageView
         android:id="@+id/imageView_intro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:src="@drawable/samsung_splash"/>
+        -->
 
 </LinearLayout>

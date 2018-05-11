@@ -4,7 +4,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.crazyup.utils.AppConfig;
-import com.crazyup.utils.LocationUtil;
 import com.crazyup.utils.retrofit2.ApiError;
 import com.crazyup.utils.retrofit2.ErrorUtils;
 import com.crazyup.utils.retrofit2.RetrofitUtil;
@@ -81,14 +80,14 @@ public class AuthStore extends MsgBase {
     public void reqAuth() {
         this.getBackHandler().removeMessages(MSG_AUTH);
         Message msg = this.makeMessage(MSG_AUTH);
-        this.sendMessageDelayed(msg, 1000);
+        this.sendMessageDelayed(msg, 0);
     }
 
     private void handleAuth(final Message msg) {
         final Message msgs = Message.obtain(msg);
 
         IAuth iAuth = RetrofitUtil.getRetrofit().create(IAuth.class);
-        Call<AuthModel> call = iAuth.get(AppConfig.CompanyKey);
+        Call<AuthModel> call = iAuth.get(AppConfig.DEFAULT_SITE_ID,AppConfig.DEFAULT_CHATBOT_ID);
         call.enqueue(new Callback<AuthModel>() {
             @Override
             public void onResponse(Call<AuthModel> call, Response<AuthModel> response) {
@@ -96,6 +95,8 @@ public class AuthStore extends MsgBase {
                     authModel = response.body();
                     Log.d(TAG, "handleAuth(), token=" +  authModel.getToken());
                     connectInfo.setKey(authModel.getToken());
+                    connectInfo.setUserId("imcloud");
+                    connectInfo.set_room_id("string");
                     handleConnectInfo(msgs);
 
                     return;
@@ -223,9 +224,9 @@ public class AuthStore extends MsgBase {
             String jsonString = json.toString();
             Log.d(TAG, "handleConnectInfo(), jsonString=" + jsonString);
             this.connectInfo.setValue("username", "imcloud");
-            this.connectInfo.setValue("y", LocationUtil.inst().getLatitude());
-            this.connectInfo.setValue("x", LocationUtil.inst().getLongitude());
-            Log.d(TAG, "handleConnectInfo(), x=" + LocationUtil.inst().getLongitude() + ", " + LocationUtil.inst().getLatitude());
+            this.connectInfo.setValue("y", "0");
+            this.connectInfo.setValue("x", "0");
+//            Log.d(TAG, "handleConnectInfo(), x=" + LocationUtil.inst().getLongitude() + ", " + LocationUtil.inst().getLatitude());
             Call<AuthModel> call = iAuth.sendConnectionInfo(this.connectInfo);
             call.enqueue(new Callback<AuthModel>() {
                 @Override
@@ -402,7 +403,7 @@ public class AuthStore extends MsgBase {
 
     public interface IAuth {
         @GET("/api/GetAuthorizationKey")
-        Call<AuthModel> get(@Query("key") String key);
+        Call<AuthModel> get( @Query("site_id") String site_id,@Query("chatbot_id") String chatbot_id );
         @FormUrlEncoded
         @POST("/api/SendConnectionInfo")
         Call<AuthModel> sendConnectionInfo(@FieldMap(encoded = true) Map<String, Object> fields);
